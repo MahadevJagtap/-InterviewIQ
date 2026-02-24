@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewIQ — AI Interview Question Generator</title>
+    <meta name="description" content="Generate tailored interview questions from any Job Description using AI. Powered by Groq.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- ─── Background Effects ──────────────────────────────────── -->
+    <div class="bg-effects">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- ─── Header ──────────────────────────────────────────────── -->
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">⚡</span>
+            <span class="logo-text">InterviewIQ</span>
+        </div>
+        <p class="header-subtitle">AI-Powered Interview Question Generator</p>
+    </header>
+
+    <!-- ─── Main Content ────────────────────────────────────────── -->
+    <main class="container">
+
+        <!-- Upload Section -->
+        <section class="card upload-section" id="upload-section">
+            <h2 class="card-title">
+                <span class="card-icon">📄</span>
+                Upload Job Description
+            </h2>
+            <p class="card-desc">Upload a PDF or DOCX file containing the job description you want to generate interview questions for.</p>
+
+            <div class="dropzone" id="dropzone">
+                <div class="dropzone-content">
+                    <div class="dropzone-icon">📁</div>
+                    <p class="dropzone-text">Drag & drop your JD file here</p>
+                    <p class="dropzone-subtext">or click to browse</p>
+                    <p class="dropzone-formats">Supports PDF, DOCX</p>
+                </div>
+                <input type="file" id="file-input" accept=".pdf,.docx" hidden>
+            </div>
+
+            <div class="file-info" id="file-info" style="display: none;">
+                <div class="file-badge">
+                    <span class="file-icon">📎</span>
+                    <span class="file-name" id="file-name"></span>
+                    <span class="file-size" id="file-size"></span>
+                    <button class="file-remove" id="file-remove" title="Remove file">✕</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Configuration Section -->
+        <section class="card config-section" id="config-section">
+            <h2 class="card-title">
+                <span class="card-icon">⚙️</span>
+                Configuration
+            </h2>
+
+            <div class="config-grid">
+                <div class="config-group">
+                    <label class="config-label">Difficulty Level</label>
+                    <div class="toggle-group" id="difficulty-group">
+                        <button class="toggle-btn" data-value="Easy">Easy</button>
+                        <button class="toggle-btn active" data-value="Medium">Medium</button>
+                        <button class="toggle-btn" data-value="Hard">Hard</button>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label class="config-label">Number of Questions</label>
+                    <div class="slider-container">
+                        <input type="range" id="num-questions" min="3" max="25" value="10" class="slider">
+                        <span class="slider-value" id="num-questions-value">10</span>
+                    </div>
+                </div>
+
+                <div class="config-group full-width">
+                    <label class="config-label">Question Categories</label>
+                    <div class="checkbox-group" id="category-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="Technical" checked>
+                            <span class="checkbox-custom"></span>
+                            Technical
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="Behavioral" checked>
+                            <span class="checkbox-custom"></span>
+                            Behavioral
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="Situational" checked>
+                            <span class="checkbox-custom"></span>
+                            Situational
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="Competency-Based">
+                            <span class="checkbox-custom"></span>
+                            Competency
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="Culture Fit">
+                            <span class="checkbox-custom"></span>
+                            Culture Fit
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-generate" id="btn-generate" disabled>
+                <span class="btn-icon">🧠</span>
+                Generate Interview Questions
+            </button>
+        </section>
+
+        <!-- Loading State -->
+        <section class="card loading-section" id="loading-section" style="display: none;">
+            <div class="loader">
+                <div class="loader-spinner"></div>
+                <p class="loader-text" id="loader-text">Parsing your document...</p>
+                <div class="loader-steps">
+                    <div class="loader-step active" id="step-1">
+                        <span class="step-dot"></span> Parsing document
+                    </div>
+                    <div class="loader-step" id="step-2">
+                        <span class="step-dot"></span> Analyzing job description
+                    </div>
+                    <div class="loader-step" id="step-3">
+                        <span class="step-dot"></span> Generating questions
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error State -->
+        <div class="error-toast" id="error-toast" style="display: none;">
+            <span class="error-icon">⚠️</span>
+            <span class="error-message" id="error-message"></span>
+            <button class="error-dismiss" id="error-dismiss">✕</button>
+        </div>
+
+        <!-- Results Section -->
+        <section id="results-section" style="display: none;">
+
+            <!-- JD Analysis Summary -->
+            <div class="card analysis-card" id="analysis-card">
+                <h2 class="card-title">
+                    <span class="card-icon">🔍</span>
+                    Job Description Analysis
+                </h2>
+                <div class="analysis-grid" id="analysis-content">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <!-- Questions Header -->
+            <div class="results-header">
+                <h2 class="results-title">
+                    <span class="results-icon">💡</span>
+                    Generated Interview Questions
+                    <span class="results-count" id="results-count"></span>
+                </h2>
+                <div class="results-actions">
+                    <button class="btn-export" id="btn-export-pdf" title="Download as PDF">
+                        <span>📥</span> Export PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="filter-bar" id="filter-bar">
+                <button class="filter-btn active" data-filter="all">All</button>
+            </div>
+
+            <!-- Questions List -->
+            <div class="questions-list" id="questions-list">
+                <!-- Filled by JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- ─── Footer ──────────────────────────────────────────────── -->
+    <footer class="footer">
+        <p>Built with <span class="footer-heart">♥</span> using Groq AI &bull; Pydantic &bull; FastAPI</p>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
