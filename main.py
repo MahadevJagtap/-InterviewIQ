@@ -57,7 +57,16 @@ def extract_text_from_file(file_path: str) -> str:
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     """Serve the main UI."""
-    return templates.TemplateResponse("index.html", {"request": request})
+    try:
+        return templates.TemplateResponse("index.html", {"request": request})
+    except Exception:
+        return JSONResponse(content={"status": "online", "message": "InterviewIQ API is running. UI Template error."})
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Render."""
+    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
 
 @app.post("/api/generate")
