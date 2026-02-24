@@ -12,6 +12,6 @@ langchain-community==0.3.13
 langgraph==0.2.60
 pypdf==5.1.0
 docx2txt==0.8
-unstructured[docx]==0.16.11
+unstructured[docx]>=0.16.0
 python-magic==0.4.27; sys_platform != 'win32'
 python-magic-bin==0.4.14; sys_platform == 'win32'
