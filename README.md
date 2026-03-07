@@ -16,7 +16,7 @@ Upload a JD (PDF / DOCX) → Get categorized questions with expected answers, ev
 
 Experience **InterviewIQ — JD-Driven Interview Question Generator** in action:
 
-🌐 **Web App:** https://interviewiq-c8ad.onrender.com 
+🌐 **Web App:** https://interviewiq-1-jsi0.onrender.com
 
 ---
 ## ✨ Features
